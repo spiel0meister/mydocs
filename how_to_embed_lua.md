@@ -64,8 +64,15 @@ It is important to verify that the type of the value is correct before using it.
 
 ## Functions
 
-Registering a C function:
+Creating a C function and registering it:
 ```c
+int function_implemented_in_c(lua_State* L) {
+    int count = lua_gettop(L); // get amount of arguments
+    return 0; // return amount of results (return values)
+}
+
+// ...
+
 lua_register(L, "FunctionNameToUseInLua", function_implemented_in_c);
 ```
 
@@ -84,3 +91,15 @@ if (lua_isfunction(L, -1)) { // verify, that is is indeed a function
     }
 }
 ```
+
+## Errors
+
+Use `luaL_error` to throw an error in the Lua VM:
+```c
+int count = lua_gettop(L); // get amount of arguments
+if (count != 2) {
+    return luaL_error(L, "Expected 2 arguments, got %d", count);
+}
+```
+
+Now when we call the function it will throw an error. You must use `lua_pcall` (protected call) instead of `lua_call`.
